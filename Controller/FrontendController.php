@@ -46,8 +46,8 @@ class FrontendController extends \LWmvc\Controller
         $view->setConfiguration($configuration);
         $view->init();
         
-        $response = $this->executeDomainEvent('Entry', 'getAllEntriesAggregate', array("configuration"=>$configuration, "listId"=>$this->configurationId));
-        $view->setAggregate($response->getDataByKey('allEntriesAggregate'));
+        $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$configuration, "listId"=>$this->configurationId));
+        $view->setAggregate($response->getDataByKey('listEntriesAggregate'));
 
         $response = $this->executeDomainEvent('Entry', 'getIsDeletableSpecification');
         $view->setIsDeletableSpecification($response->getDataByKey('isDeletableSpecification'));
@@ -59,7 +59,7 @@ class FrontendController extends \LWmvc\Controller
      {
         $formView = new \lwListtool\View\EntryForm('add');
 
-        $response = $this->executeDomainEvent('Entry', 'getEntryEntityFromArray', array(), array("postArray"=>$this->request->getPostArray()));
+        $response = $this->executeDomainEvent('Entry', 'getEntryEntityFromPostArray', array(), array("postArray"=>$this->request->getPostArray()));
         $formView->setEntity($response->getDataByKey('EntryEntity'));
         $formView->setEntryType('file');
         $formView->setErrors($error);
@@ -70,7 +70,10 @@ class FrontendController extends \LWmvc\Controller
 
      protected function addEntryAction()
      {
-        $response = $this->executeDomainEvent('Entry', 'add', array("listId"=>$this->configurationId), array('postArray'=>$this->request->getPostArray(), 'opt1file'=>$this->request->getFileData('opt1file'), 'opt2file'=>$this->request->getFileData('opt2file')));
+        $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
+        $configuration = $response->getDataByKey('ConfigurationEntity');
+
+        $response = $this->executeDomainEvent('Entry', 'add', array("listId"=>$this->configurationId, "configuration" => $configuration), array('postArray'=>$this->request->getPostArray(), 'opt1file'=>$this->request->getFileData('opt1file'), 'opt2file'=>$this->request->getFileData('opt2file')));
         if ($response->getParameterByKey("error")) {
             return $this->showAddFileFormAction($response->getDataByKey("error"));
         }

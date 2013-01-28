@@ -2,62 +2,64 @@
 
 namespace lwListtool\Domain\Entry;
 
-class EventHandler 
+class EventHandler extends \LWddd\EventHandler
 {
     public function __construct()
     {
-        $this->dic = new \lwListtool\Services\dic();
+        parent::__construct();
+        $this->baseNamespace = "\\lwListtool\\Domain\\Entry\\";
     }
     
     public function getInstance()
     {
         return new EventHandler();
     }
-
-    public function execute($event)
+    
+    protected function getNewDomainObject($id=false)
     {
-        $this->event = $event;
-        $method = $this->event->getEventName();
-        return $this->$method();
+        return new \lwListtool\Domain\Entry\Object\entry($id);
     }
 
-    public function getEntryEntityFromArray()
+    protected function buildValueObjectFromPostArrays()
     {
-        $dataValueObject = new \LWddd\ValueObject($this->event->getDataByKey('postArray'));
-        $entity = \lwListtool\Domain\Entry\Model\Factory::getInstance()->buildNewObjectFromValueObject($dataValueObject);
+        $array = $this->event->getDataByKey('postArray');
+        $array['opt1file'] = $this->event->getDataByKey('opt1file');
+        $array['opt2file'] = $this->event->getDataByKey('opt2file');
+        return new \LWddd\ValueObject($array);
+    }    
+    
+    public function getEntryEntityFromPostArray()
+    {
+        $entity = $this->buildEntityFromArray($this->event->getDataByKey('postArray'));
         $this->event->getResponse()->setDataByKey('EntryEntity', $entity);
         return $this->event->getResponse();
-        
     }
     
-    public function getAllEntriesAggregate()
+    public function getListEntriesAggregate()
     {
-        $aggregate = $this->dic->getEntryRepository()->getAllObjectsAggregate($this->event->getParameterByKey("listId"), $this->event->getParameterByKey("sorting"));
-        $this->event->getResponse()->setDataByKey('allOrganizationsAggregate', $aggregate);
-        return $this->event->getResponse();
-        
-    }
-    
-    public function getIsDeletableSpecification()
-    {
-        $this->event->getResponse()->setDataByKey('isDeletableSpecification', \lwListtool\Domain\Entry\Specification\isDeletable::getInstance());
+        $items = $this->getQueryHandler()->loadAllEntriesByListId($this->event->getParameterByKey("listId"), $this->event->getParameterByKey("sorting"));
+        $aggregate = $this->buildAggregateFromQueryResult($items);        
+        $this->event->getResponse()->setDataByKey('listEntriesAggregate', $aggregate);
         return $this->event->getResponse();
     }
     
     public function add()
     {
-        try {
-            $array = $this->event->getDataByKey('postArray');
-            $array['opt1file'] = $this->event->getDataByKey('opt1file');
-            $array['opt2file'] = $this->event->getDataByKey('opt2file');
-            $dataValueObject = new \LWddd\ValueObject($array);
-            $result = $this->dic->getEntryRepository()->saveObject(false, $this->event->getParameterByKey("listId"), $dataValueObject);
+        $DataValueObjectFiltered = $this->getDataValueObjectFilter()->filter($this->buildValueObjectFromPostArrays());
+        $entity = $this->buildEntityFromValueObject($DataValueObjectFiltered);
+
+        $isValidSpecification = $this->getIsValidSpecification();
+        $isValidSpecification->setConfiguration($this->event->getParameterByKey("configuration"));
+
+        if ($isValidSpecification->isSatisfiedBy($entity)) {
+            $id = $this->saveEntity($entity);
             $this->event->getResponse()->setParameterByKey('saved', true);
         }
-        catch (\LWddd\validationErrorsException $e) {
-            $this->event->getResponse()->setDataByKey('error', $e->getErrors());
+        else {
+            echo "<h2>Errors: </h2><pre>";print_r($this->getIsValidSpecification()->getErrors());exit();
+            $this->event->getResponse()->setDataByKey('error', $this->getIsValidSpecification()->getErrors());
             $this->event->getResponse()->setParameterByKey('error', true);
-        }
+        }                    
         return  $this->event->getResponse();
     }
 }
