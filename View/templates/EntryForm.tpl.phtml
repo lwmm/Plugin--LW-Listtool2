@@ -1,0 +1,227 @@
+<script language="javascript" type="text/javascript" src="<?php echo $this->mediaUrl; ?>/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">
+    tinyMCE.init({
+    mode : "specific_textareas",
+    editor_selector : "listtoolmceEditor",
+    theme : "simple",
+    language : "de",
+    convert_urls : false,
+    relative_urls : false,
+    remove_script_host : false
+    });
+    
+    $(document).ready(function() {
+        $("#shown_opt2number").datepicker({
+            monthNames: ['Januar','Februar','M&auml;rz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+            dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+
+            monthNamesShort: ['Jan','Feb','M&auml;r','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'],
+            dayNamesShort: ['Son','Mon','Die','Mit','Don','Fre','Sam'],
+
+            dateFormat: "dd.mm.yy",
+            altField: '#opt2number', 
+            altFormat: 'yymmdd',
+            changeMonth: true,
+            changeYear: true,
+
+            showOn: 'both',
+            buttonImage: '<?php echo $this->mediaUrl; ?>/pics/fatcow_icons/16x16_0180/calendar_view_month.png'
+        });
+
+    }); 
+    
+</script>  
+
+<div class="lt_form">
+
+    <?php if ($this->isWriteAllowed): ?>
+    <form action="<?php echo $this->actionUrl; ?>" method="post" enctype="multipart/form-data">
+
+        <script>
+            $(function() {
+                $( "#tabs" ).tabs();
+            });
+        </script>
+
+        <div class="demo" style="width:98%">
+
+            <div id="tabs">
+
+                <ul>
+                    <li><a href="#tabs-1"><?php if($this->lang =="en"): echo "Base data"; else: echo "Grunddaten"; endif; ?></a></li>
+                    <li><a href="#tabs-2"><?php if($this->lang =="en"): echo "Additional data"; else: echo "Zusatzdaten"; endif; ?></a></li>
+                </ul>
+
+                <div id="tabs-1">
+
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "published"; else: echo "ver&ouml;ffentlicht"; endif; ?></div>
+                        <div class="lt_fieldvalue"><input type="checkbox" name="published" value="1"<?php if($this->entry->getValueByKey('published') == 1): echo ' checked="checked"'; endif; ?>/></div>
+                    </div>
+
+                    <?php if($this->error1): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "Please enter a value!"; else: echo "Bitte einen Wert eingeben!"; endif; ?></div>
+                    <?php endif; ?>
+                    <?php if($this->error2): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 255 characters allowed!"; else: echo "Der Wert darf maximal 255 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel">Name</div>
+                        <div class="lt_fieldvalue"><input type="text" name="name" value="<?php echo $this->entry->getValueByKey('name'); ?>" size="40" /></div>
+                    </div>                
+
+                    <?php if($this->error3): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 255 characters allowed!"; else: echo "Der Wert darf maximal 255 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Description"; else: echo "Beschreibung"; endif; ?></div>
+                        <div class="lt_fieldvalue"><textarea name="description" rows="3" cols="38" class="listtoolmceEditor" /><?php echo $this->entry->getValueByKey('description'); ?></textarea></div>
+                    </div>                
+
+                    <?php if($this->error4): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 8 characters allowed!"; else: echo "Der Wert darf maximal 8 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Free date"; else: echo "Freies Datum"; endif; ?></div>
+                        <div class="lt_fieldvalue">
+                            <input id="opt2number" type="hidden" name="opt2number" value="<?php echo $this->entry->getValueByKey('opt2number'); ?>" />
+                            <input id="shown_opt2number" type="text" name="shown_opt2number" value="<?php echo $this->formatDate($this->entry->getValueByKey('opt2number')); ?>" class="lw_fe_datepicker" />
+                        </div>
+                    </div>                
+
+                    <?php if($this->entry->isLink()): ?>
+                    <?php if($this->error5): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 255 characters allowed!"; else: echo "Der Wert darf maximal 255 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <?php if($this->error8): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "Please enter a value!"; else: echo "Bitte einen Wert eingeben!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Link"; else: echo "Verlinkung"; endif; ?></div>
+                        <div class="lt_fieldvalue"><input type="text" name="opt3text" value="<?php echo $this->entry->getValueByKey('opt3text'); ?>" size="40" /></div>
+                    </div>                
+                    <?php endif; ?>
+
+                    <?php if($this->entry->isFile()): ?>
+                    <?php if($this->error9): ?>
+                    <div class="lt_error">
+                        <?php if($this->lang =="en"): echo "Files of this type are not allowed!"; else: echo "Dateien dieses Typs sind nicht erlaubt!"; endif; ?>
+                        <?php if($this->error9_allowed): ?><br/><?php if($this->lang =="en"): echo "allowed"; else: echo "erlaubt ist"; endif; ?>: <?php echo $this->entry->getValueByKey('opt2file_allowed'); ?><?php endif; ?>
+                        <?php if($this->error9_notallowed): ?><br/><?php if($this->lang =="en"): echo "not allowed"; else: echo "nicht erlaubt ist"; endif; ?>: <?php echo $this->entry->getValueByKey('opt2file_notallowed'); ?><?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php if($this->error10): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "Please upload a file!"; else: echo "Bitte eine Datei hochladen!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "File"; else: echo "Datei"; endif; ?></div>
+                        <div class="lt_fieldvalue">
+                            <input type="file" name="opt2file" /><br/>
+                        </div>
+                    </div>
+                    <?php if($this->entry->hasFile()): ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "File"; else: echo "Datei"; endif; ?>:</div>
+                        <div class="lt_fieldvalue"><?php echo $this->entry->getValueByKey('opt2file_name'); ?></div>
+                    </div>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "File rights"; else: echo "Dateirechte"; endif; ?>:</div>
+                        <div class="lt_fieldvalue"><?php echo $this->entry->getValueByKey('opt2file_rights'); ?></div>
+                    </div>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Fiel Upload Date"; else: echo "Uploaddatum"; endif; ?>:</div>
+                        <div class="lt_fieldvalue"><?php echo $this->formatDate($this->entry->getValueByKey('opt3number')); ?></div>
+                    </div>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "File size"; else: echo "Gr&ouml;&szlig;e"; endif; ?>:</div>
+                        <div class="lt_fieldvalue"><?php echo $this->entry->getValueByKey('opt2file_size'); ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <?php endif; ?>
+
+                    <input type="submit" value="speichern" />
+
+                </div>
+                <div id="tabs-2">
+
+                    <?php if($this->error6): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 255 characters allowed!"; else: echo "Der Wert darf maximal 255 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Additional Info"; else: echo "Zusatzinfo"; endif; ?></div>
+                        <div class="lt_fieldvalue"><textarea name="opt1text" rows="3" cols="37" /><?php echo $this->entry->getValueByKey('opt1text'); ?></textarea></div>
+                    </div>                
+
+                    <?php if($this->error7): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "only 255 characters allowed!"; else: echo "Der Wert darf maximal 255 Zeichen lang sein!"; endif; ?></div>
+                    <?php endif; ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Keywords"; else: echo "Stichworte"; endif; ?></div>
+                        <div class="lt_fieldvalue"><textarea name="opt2text" rows="3" cols="37" /><?php echo $this->entry->getValueByKey('opt2text'); ?></textarea></div>
+                    </div>                
+
+                    <?php if($this->entry->hasLastDate()): ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Last change"; else: echo "letzte &Auml;nderung"; endif; ?></div>
+                        <div class="lt_fieldvalue"><?php echo $this->formatDate($this->entry->getValueByKey('lw_last_date')); ?></div>
+                    </div>                
+                    <?php endif; ?>
+                    
+                    <?php if($this->entry->hasUsername()): ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "Last user"; else: echo "Letzter Bearbeiter"; endif; ?></div>
+                        <div class="lt_fieldvalue"><?php echo $this->entry->getValueByKey('last_username'); ?></div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <?php if($this->entry->hasFirstDate()): ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "added"; else: echo "angelegt"; endif; ?></div>
+                        <div class="lt_fieldvalue"><?php echo $this->formatDate($this->entry->getValueByKey('lw_first_date')); ?></div>
+                    </div>                 
+                    <?php endif; ?>
+                    
+                    <?php if($this->error13): ?>
+                    <div class="lt_error">
+                        <?php if($this->lang =="en"): echo "Files of this type are not allowed!"; else: echo "Dateien dieses Typs sind nicht erlaubt!"; endif; ?>
+                        <?php if($this->entry->getValueByKey('error13_allowed')): ?>
+                        <br/><?php if($this->lang =="en"): echo "allowed"; else: echo "erlaubt ist"; endif; ?>: <?php echo $this->entry->getValueByKey('error13_allowed'); ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                    <?php if($this->error14): ?>
+                        <div class="lt_error"><?php if($this->lang =="en"): echo "Please upload a file!"; else: echo "Bitte eine Datei hochladen!"; endif; ?>!</div>
+                    <?php endif; ?>
+
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel">Thumbnail</div>
+                        <div class="lt_fieldvalue">
+                            <input type="file" name="opt1file" /><br/>
+                        </div>
+                    </div>                
+
+                    <?php if($this->entry->hasThumbnail()): ?>
+                    <div class="lt_fieldwrapper">
+                        <div class="lt_fieldlabel"><?php if($this->lang =="en"): echo "File"; else: echo "Datei"; endif; ?>:</div>
+                        <div class="lt_fieldvalue">
+                            <?php echo $this->entry->getValueByKey('opt1file_name'); ?><br/>
+                            <img src="<?php echo $this->entry->getValueByKey('opt1file_thumbnail'); ?>" />
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+
+                    <input type="submit" value="speichern" />
+
+                </div>
+            </div>
+
+        </div>   
+
+    </form>
+
+    <?php else: ?>
+    <!-- Keine Schreib-Berechtigung! -->
+    <?php endif; ?>
+    
+</div>
