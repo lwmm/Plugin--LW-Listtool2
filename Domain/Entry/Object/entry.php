@@ -16,12 +16,18 @@ class entry extends \LWddd\Entity
     
     public function isLink()
     {
+        if ($this->getValueByKey('opt1bool') == 1 && $this->isLoaded()) {
+            return true;
+        }
         return false;
     }
     
     public function isFile()
     {
-        return true;
+        if ($this->getValueByKey('opt1bool') != 1 && $this->isLoaded()) {
+            return true;
+        }
+        return false;
     }
     
     public function hasFile()
@@ -47,5 +53,10 @@ class entry extends \LWddd\Entity
     public function hasThumbnail()
     {
         return false;
+    }
+    
+    public function getFirstDate()
+    {
+        return \lw_object::formatDate($this->getValueByKey('lw_first_date'));
     }
 }

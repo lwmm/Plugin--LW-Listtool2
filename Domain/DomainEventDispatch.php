@@ -16,7 +16,11 @@ class DomainEventDispatch
     
     public function execute($event)
     {
-        $DomainEventHandlerClass = "\\lwListtool\\Domain\\".$event->getDomainName()."\\EventHandler";
-        return $DomainEventHandlerClass::getInstance()->execute($event);
+        if ($event->getDomainName() == "Configuration") {
+            $DomainEventHandlerClass = "\\lwListtool\\Domain\\".$event->getDomainName()."\\EventHandler";
+            return $DomainEventHandlerClass::getInstance()->execute($event);
+        }
+        $class = "\\lwListtool\\Domain\\".$event->getDomainName()."\\EventResolver\\".$event->getEventName();
+        return $class::getInstance($event)->resolve();
     }
 }

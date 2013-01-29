@@ -19,8 +19,10 @@ class isValid extends \LWddd\Validator
                 "published",
                 "description",
                 "opt2number",
+                "opt1bool",
                 "opt1text",
                 "opt2text",
+                "opt3text",
                 "opt1file",
                 "opt2file");
         
@@ -63,8 +65,15 @@ class isValid extends \LWddd\Validator
     
     public function nameValidate($key, $object)
     {
+        $value = trim($object->getValueByKey($key));
+               
+        if (!$value) {
+            $this->addError($key, LW_REQUIRED_ERROR);
+            return false;
+        }
+        
         $maxlength = 255;
-        if (!$this->hasMaxlength($object->getValueByKey($key), array("maxlength"=>$maxlength)) ) {
+        if (!$this->hasMaxlength($value, array("maxlength"=>$maxlength)) ) {
             $this->addError($key, LW_MAXLENGTH_ERROR, array("maxlength"=>$maxlength));
             return false;
         }
@@ -119,19 +128,38 @@ class isValid extends \LWddd\Validator
             $extarray[] = strtolower(trim($singleext));
         }
         if (!in_array('.'.strtolower($ext), $extarray)) {
-            $this->addError($key, LW_WHITELIST_ERROR, array("allowed"=>$extlist));
+            $this->addError($key, LW_WHITELIST_ERROR, array("allowed"=>$extlist, "extension"=>$ext));
             $ok = false;
         }
         return $ok;
     }
     
-    public function opt2fileValidate($key, $object)
+    public function opt3textValidate($key, $object)
     {
-        $ok = true;
-        $array = $object->getValueByKey($key);
-        if (!$array['name']) {
+        if ($object->getValueByKey('opt1bool') != 1) {
             return true;
         }
+        $value = $object->getValueByKey($key);
+        if (!$value) {
+            $this->addError($key, LW_REQUIRED_ERROR);
+            return false;
+        }
+        return true;
+    }
+    
+    public function opt2fileValidate($key, $object)
+    {
+        if ($object->getValueByKey('opt1bool') == 1) {
+            return true;
+        }
+        $ok = true;
+        
+        $array = $object->getValueByKey($key);
+        if (!$array['name']) {
+            $this->addError($key, LW_REQUIRED_ERROR);
+            return false;
+        }
+        
         if ($array['size'] > $this->maxfilesize) {
             $this->addError($key, LW_FILETOOBIG_ERROR, array("maxsize"=>$this->maxfilesize, "actualsize"=>$array['size']));
             $ok = false;
@@ -144,13 +172,13 @@ class isValid extends \LWddd\Validator
         }
         if ($this->configuration->getValueByKey('suffix_type') == "white") {
             if (!in_array('.'.strtolower($ext), $extarray)) {
-                $this->addError($key, LW_WHITELIST_ERROR, array("allowed"=>$this->configuration->getValueByKey('suffix')));
+                $this->addError($key, LW_WHITELIST_ERROR, array("allowed"=>$this->configuration->getValueByKey('suffix'), "extension"=>$ext));
                 $ok = false;
             }
         }
         else {
             if (in_array($ext, $extarray)) {
-                $this->addError($key, LW_BLACKLIST_ERROR, array("notallowed"=>$this->configuration->getValueByKey('suffix')));
+                $this->addError($key, LW_BLACKLIST_ERROR, array("notallowed"=>$this->configuration->getValueByKey('suffix'), "extension"=>$ext));
                 $ok = false;
             }
         }

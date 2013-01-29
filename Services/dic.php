@@ -60,4 +60,14 @@ class dic
     {
         return \lw_registry::getInstance()->getEntry("request");
     }
+
+    public function getLwAuth()
+    {
+        return \lw_registry::getInstance()->getEntry("auth");
+    }
+
+    public function getLwInAuth()
+    {
+        return \lw_in_auth::getInstance();
+    }
 }

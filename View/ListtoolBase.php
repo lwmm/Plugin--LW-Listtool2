@@ -15,8 +15,6 @@ class ListtoolBase extends \LWmvc\View
         $this->view->addurllink = \lw_page::getInstance()->getUrl(array("cmd"=>"showAddLinkForm"));
         $this->view->sorturl = \lw_page::getInstance()->getUrl();
         $this->view->baseurl = \lw_page::getInstance()->getUrl();
-        $this->view->cmdIdentifier = "";
-        $this->view->idIdentifier = "";
         return $this->view->render();
     }
 }

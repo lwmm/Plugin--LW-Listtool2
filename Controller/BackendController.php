@@ -48,6 +48,13 @@ class BackendController extends \LWmvc\Controller
         $formView = new \lwListtool\View\ConfigurationForm('edit');
         $formView->setEntity($entity);
         $formView->setErrors($error);
+        
+        $response = $this->executeDomainEvent('ListRights', 'getIntranetsByListId', array("listId"=>$this->configurationId));
+        $formView->setAssignedIntranets($response->getDataByKey('IntranetsArray'));
+
+        $response = $this->executeDomainEvent('ListRights', 'getUserByListId', array("listId"=>$this->configurationId));
+        $formView->setAssignedUser($response->getDataByKey('UserArray'));
+        
         return $this->returnRenderedView($formView);
     }    
 
@@ -63,5 +70,32 @@ class BackendController extends \LWmvc\Controller
     protected function deleteAction()
     {
         return $this->buildDeleteAction('Configuration', $this->configurationId);
-    }    
+    }
+    
+    protected function assignIntranetsAction()
+    {
+        $config = \lw_registry::getInstance()->getEntry("config");
+        include_once($config['path']['server'].'c_backend/intranetassignments/agent_intranetassignments.class.php');
+        $assign = new \agent_intranetassignments();
+
+        $assign->setObject('listtool_cbox', $this->request->getInt("oid"));
+        $assign->setAction(\lw_object::buildUrl(array("pcmd" => "saveAssignIntranets", "ltid" => $this->request->getInt("oid"))));
+        $assign->execute();
+    }
+    
+    protected function saveAssignIntranetsAction()
+    {
+        $config = \lw_registry::getInstance()->getEntry("config");
+        include_once($config['path']['server'] . 'c_backend/intranetassignments/agent_intranetassignments.class.php');
+        $assign = new \agent_intranetassignments();
+        $assign->setDelegate($this);
+        $assign->setObject('listtool_cbox', $this->request->getInt("oid"));
+
+        $temp = $this->request->getPostArray();
+        $assign->setAssignedUsers($temp['user']);
+        $assign->setAssignedIntranets($temp['intranet']);
+        $assign->saveObject();
+
+        return $this->buildReloadResponse(array("pcmd"=>"assignIntranets", "ltid" => $this->request->getInt("oid")));
+    }
 }

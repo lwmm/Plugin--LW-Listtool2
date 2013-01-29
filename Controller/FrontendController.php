@@ -33,56 +33,132 @@ class FrontendController extends \LWmvc\Controller
     {
         $this->configurationId = intval($id);
     }
+
+    public function init()
+    {
+        $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
+        $this->listConfig = $response->getDataByKey('ConfigurationEntity');
+        
+        $response = $this->executeDomainEvent('ListRights', 'getListRightsObject', array("listId"=>$this->configurationId, "listConfig"=>$this->listConfig));
+        $this->listRights = $response->getDataByKey('rightsObject');
+    }
     
     protected function showListAction($error = false)
     {
-        $this->response->useJQuery();
-        $this->response->useJQueryUI();
-        
-        $view = new \lwListtool\View\ListtoolList();
+        if ($this->listRights->isReadAllowed()) {
+            $this->response->useJQuery();
+            $this->response->useJQueryUI();
 
-        $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
-        $configuration = $response->getDataByKey('ConfigurationEntity');
-        $view->setConfiguration($configuration);
-        $view->init();
-        
-        $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$configuration, "listId"=>$this->configurationId));
-        $view->setAggregate($response->getDataByKey('listEntriesAggregate'));
+            $view = new \lwListtool\View\ListtoolList();
 
-        $response = $this->executeDomainEvent('Entry', 'getIsDeletableSpecification');
-        $view->setIsDeletableSpecification($response->getDataByKey('isDeletableSpecification'));
+            $view->setConfiguration($this->listConfig);
+            $view->setListRights($this->listRights);
+            $view->init();
         
-        return $this->returnRenderedView($view);    
+            $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$configuration, "listId"=>$this->configurationId));
+            $view->setAggregate($response->getDataByKey('listEntriesAggregate'));
+
+            $response = $this->executeDomainEvent('Entry', 'getIsDeletableSpecification');
+            $view->setIsDeletableSpecification($response->getDataByKey('isDeletableSpecification'));
+            return $this->returnRenderedView($view);    
+        }
+        else {
+           die("not allowed");
+        }
      }
      
-     protected function showAddFileFormAction()
+     protected function showAddFileFormAction($error=false)
      {
-        $formView = new \lwListtool\View\EntryForm('add');
-
-        $response = $this->executeDomainEvent('Entry', 'getEntryEntityFromPostArray', array(), array("postArray"=>$this->request->getPostArray()));
-        $formView->setEntity($response->getDataByKey('EntryEntity'));
-        $formView->setEntryType('file');
-        $formView->setErrors($error);
-        $response = $this->returnRenderedView($formView);
-        $response->setParameterByKey('die', 1);
-        return $response;
+        if ($this->listRights->isWriteAllowed()) {
+            return $this->buildAddForm('file', $error);
+        }
      }
-
+     
      protected function addEntryAction()
      {
-        $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
-        $configuration = $response->getDataByKey('ConfigurationEntity');
+        if ($this->listRights->isWriteAllowed()) {
+            $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
+            $configuration = $response->getDataByKey('ConfigurationEntity');
 
-        $response = $this->executeDomainEvent('Entry', 'add', array("listId"=>$this->configurationId, "configuration" => $configuration), array('postArray'=>$this->request->getPostArray(), 'opt1file'=>$this->request->getFileData('opt1file'), 'opt2file'=>$this->request->getFileData('opt2file')));
-        if ($response->getParameterByKey("error")) {
-            return $this->showAddFileFormAction($response->getDataByKey("error"));
+            $response = $this->executeDomainEvent('Entry', 'add', array("listId"=>$this->configurationId, "configuration" => $configuration), array('postArray'=>$this->request->getPostArray(), 'opt1file'=>$this->request->getFileData('opt1file'), 'opt2file'=>$this->request->getFileData('opt2file')));
+            if ($response->getParameterByKey("error")) {
+                if ($this->request->getAlnum("type") == "file") {
+                    return $this->showAddFileFormAction($response->getDataByKey("error"));
+                } 
+                else {
+                    return $this->showAddLinkFormAction($response->getDataByKey("error"));
+                }
+            }
+            return $this->buildReloadResponse(array("cmd"=>"showList", "reloadParent"=>1));
         }
-        return $this->buildReloadResponse(array("cmd"=>"showList", "response"=>1));
      }
-     
-     protected function showAddLinkFormAction()
+
+     protected function showEditEntryFormAction($error=false)
      {
-         die("addLink");
+        if ($this->listRights->isWriteAllowed()) {
+            $formView = new \lwListtool\View\EntryForm('add');
+            if ($error) {
+                $response = $this->executeDomainEvent('Entry', 'getEntryEntityFromPostArray', array(), array("postArray"=>$this->request->getPostArray()));
+            }
+            else {
+                $response = $this->executeDomainEvent('Entry', 'getEntryEntityById', array("id"=>$this->request->getInt("id"), "listId"=>$this->configurationId));
+            }
+            $entity = $response->getDataByKey('EntryEntity');
+            $entity->setId($this->request->getInt("id"));
+            $formView->setEntity($entity);
+            if ($entity->isFile()) {
+                $formView->setEntryType('file');
+            }
+            else {
+                $formView->setEntryType('link');
+            }
+            $formView->setErrors($error);
+            $response = $this->returnRenderedView($formView);
+            $response->setParameterByKey('die', 1);
+            return $response;
+        }
      }
      
+     protected function saveEntryAction()
+     {
+        if ($this->listRights->isWriteAllowed()) {
+            $response = $this->executeDomainEvent('Configuration', 'getConfigurationEntityById', array("id"=>$this->configurationId));
+            $configuration = $response->getDataByKey('ConfigurationEntity');
+
+            $response = $this->executeDomainEvent('Entry', 'save', array("id"=>$this->request->getInt("id"), "listId"=>$this->configurationId, "configuration" => $configuration), array('postArray'=>$this->request->getPostArray(), 'opt1file'=>$this->request->getFileData('opt1file'), 'opt2file'=>$this->request->getFileData('opt2file')));
+            if ($response->getParameterByKey("error")) {
+                return $this->showEditEntryFormAction($response->getDataByKey("error"));
+            }
+            return $this->buildReloadResponse(array("cmd"=>"showList", "reloadParent"=>1));
+        }
+     }
+     
+     protected function showAddLinkFormAction($error=false)
+     {
+        if ($this->listRights->isWriteAllowed()) {
+            return $this->buildAddForm('link', $error);
+        }
+     }
+     
+     protected function buildAddForm($type, $error=false)
+     {
+        if ($this->listRights->isWriteAllowed()) {
+            $formView = new \lwListtool\View\EntryForm('add');
+            $response = $this->executeDomainEvent('Entry', 'getEntryEntityFromPostArray', array(), array("postArray"=>$this->request->getPostArray()));
+            $formView->setEntity($response->getDataByKey('EntryEntity'));
+            $formView->setEntryType($type);
+            $formView->setErrors($error);
+            $response = $this->returnRenderedView($formView);
+            $response->setParameterByKey('die', 1);
+            return $response;
+        }
+     }
+     
+     protected function deleteEntryAction()
+     {
+        if ($this->listRights->isWriteAllowed()) {
+            $response = $this->executeDomainEvent('Entry', 'delete', array("id"=>$this->request->getInt("id"), "listId"=>$this->configurationId));
+            return $this->buildReloadResponse(array("cmd"=>"showList"));
+        }
+     }
 }

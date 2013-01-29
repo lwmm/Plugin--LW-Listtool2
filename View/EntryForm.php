@@ -16,6 +16,10 @@ class EntryForm extends \LWmvc\View
     {
         if ($type != "file") {
             $type = "link";
+            $this->view->typeSwitch = "1";
+        }
+        else {
+            $this->view->typeSwitch = "0";
         }
         $this->entryType = $type;
     }
@@ -23,7 +27,18 @@ class EntryForm extends \LWmvc\View
     public function render()
     {
         $this->view->mediaUrl = $this->systemConfiguration['url']['media'];
-        $this->view->actionUrl = \lw_page::getInstance()->getUrl(array("cmd"=>"addEntry"));
+        if ($this->entity->getId()<1) {
+            $this->view->actionUrl = \lw_page::getInstance()->getUrl(array("cmd"=>"addEntry", "type" => $this->entryType));
+            if ($this->entryType == "file") {
+                $this->view->addFile = true;
+            }
+            else {
+                $this->view->addLink = true;
+            }
+        }
+        else {
+            $this->view->actionUrl = \lw_page::getInstance()->getUrl(array("cmd"=>"saveEntry", "id"=>$this->entity->getId()));
+        }
         $this->view->isWriteAllowed = true;
         $this->view->entry = $this->entity;
         $form = $this->view->render();

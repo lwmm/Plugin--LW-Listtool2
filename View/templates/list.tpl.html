@@ -22,7 +22,7 @@
             </thead>
             <tbody>
                 <!-- lw:blockstart entry -->
-                <tr class="{{ cycle(['odd', 'even'], loop.index) }}">
+                <tr>
                     <td align="left">
                         <!-- lw:var id -->
                     </td>
@@ -30,7 +30,7 @@
                         <!-- lw:var name -->
                     </td>
                     <td align="left">
-                        <!-- lw:var lw_first_date|formatDate --> - <!-- lw:var last_username -->
+                        <!-- lw:var lw_first_date --> - <!-- lw:var last_username -->
                     </td>
                     <!-- lw:if ltWrite -->
                     <td align="left">
@@ -39,15 +39,15 @@
                     <!-- lw:endif ltWrite -->
                     <td align="left">
                         <!-- lw:if link -->
-                        <a href="<!-- lw:var opt3text -->">link</a>
+                        <a href="<!-- lw:var opt3text -->">link</a> | 
                         <!-- lw:endif link -->
                         <!-- lw:if file -->
-                        <a href="<!-- lw:var downloadurl -->&<!-- lw:var idIdentifier -->=<!-- lw:var id -->">download</a>
+                        <a href="<!-- lw:var downloadurl -->">download</a> | 
                         <!-- lw:endif file -->
                         <!-- lw:if ltWrite -->
                         <span class="lt_adminfunctions">
-                            | <a href="#" class="lt_edit_entry" id="lt_entry_<!-- lw:var id -->">bearbeiten</a>
-                            | <a href="<!-- lw:var baseurl -->&<!-- lw:var cmdIdentifier -->=deleteEntry&<!-- lw:var idIdentifier -->=<!-- lw:var id -->" onclick="return confirm('wirklich entfernen?');">entfernen</a>
+                            <a href="#" class="lt_edit_entry" id="lt_entry_<!-- lw:var id -->">bearbeiten</a>
+                            | <a href="<!-- lw:var deleteurl -->" onclick="return confirm('wirklich entfernen?');">entfernen</a>
                         </span>
                         <!-- lw:endif ltWrite -->
                     </td>

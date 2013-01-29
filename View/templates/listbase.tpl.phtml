@@ -29,7 +29,7 @@
 
         $(".lt_edit_entry").click(function() {
             var ltid = $(this).attr('id').replace(/lt_entry_/g, "");
-            $("#listtool_iframe").html('<iframe frameborder="0" src="<?php echo $this->baseurl; ?>&<!-- lw:var cmdIdentifier -->=editEntry&<!-- lw:var idIdentifier -->='+ltid+'" width="99%" height="99%" name="new file"></iframe>');
+            $("#listtool_iframe").html('<iframe frameborder="0" src="<?php echo $this->baseurl; ?>&cmd=showEditEntryForm&id='+ltid+'" width="99%" height="99%" name="new file"></iframe>');
             $("#listtool_iframe").dialog("open");
             return false;
         });

@@ -56,19 +56,38 @@ class Filter
         return 1;
     }
     
-    protected function descriptionFilter($value)
+    protected function nameFilter($value)
     {
-        return base64_encode($value);
+        $value = $this->_TextBaseFilter($value);
+        return strip_tags($value);
     }
     
+    protected function descriptionFilter($value)
+    {
+        return $this->_TextBaseFilter($value);
+    }
+
     protected function opt1textFilter($value)
     {
+        $value = $this->_TextBaseFilter($value);
         return strip_tags($value);
     }
     
     protected function opt2textFilter($value)
     {
+        $value = $this->_TextBaseFilter($value);
         return strip_tags($value);
     }
     
+    protected function opt3textFilter($value)
+    {
+        $value = $this->_TextBaseFilter($value);
+        return strip_tags($value);
+    }
+    
+    protected function _TextBaseFilter($value)
+    {
+        $value = utf8_decode($value);
+        return htmlentities($value);
+    }
 }

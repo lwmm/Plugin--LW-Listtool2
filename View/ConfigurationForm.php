@@ -16,7 +16,18 @@ class ConfigurationForm extends \LWmvc\View
     {
         $this->view->actionUrl = $this->systemConfiguration['url']['client']."admin.php?obj=content&cmd=open&oid=".$this->entity->getId()."&pcmd=save";
         $this->view->backUrl = $this->systemConfiguration['url']['client']."admin.php?obj=content";
+        $this->view->rightslink = '<a href="#" onClick="openNewWindow(\'' . $this->systemConfiguration['url']['client']."admin.php?obj=content&cmd=open&oid=".$this->entity->getId()."&pcmd=assignIntranets&ltid=".$this->entity->getId().'\');">Rechtezuweisung</a>';
         $this->entity->renderView($this->view);
         return $this->view->render();    
+    }
+    
+    public function setAssignedUser($array)
+    {
+        $this->view->users = $array;
+    }
+    
+    public function setAssignedIntranets($array)
+    {
+        $this->view->intranets = $array;
     }
 }
