@@ -18,6 +18,7 @@
                     <th>published</th>
                     <!-- lw:endif ltWrite -->
                     <th>&nbsp;</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,16 +40,33 @@
                     <!-- lw:endif ltWrite -->
                     <td align="left">
                         <!-- lw:if link -->
-                        <a href="<!-- lw:var opt3text -->">link</a> | 
+                        <a href="<!-- lw:var opt3text -->">link</a>
                         <!-- lw:endif link -->
                         <!-- lw:if file -->
-                        <a href="<!-- lw:var downloadurl -->">download</a> | 
+                        <a href="<!-- lw:var downloadurl -->">download</a>
                         <!-- lw:endif file -->
+                    </td>
+                    <td>
                         <!-- lw:if ltWrite -->
+                        <!-- lw:if showEditOptions -->
                         <span class="lt_adminfunctions">
                             <a href="#" class="lt_edit_entry" id="lt_entry_<!-- lw:var id -->">bearbeiten</a>
                             | <a href="<!-- lw:var deleteurl -->" onclick="return confirm('wirklich entfernen?');">entfernen</a>
+                            <!-- lw:if showReleaseLink -->
+                            | <a href="<!-- lw:var releaseurl -->">zur&uuml;ckgeben</a>
+                            <!-- lw:endif showReleaseLink -->
                         </span>
+                        <!-- lw:endif showEditOptions -->
+                        <!-- lw:if borrow -->
+                        <span class="lt_adminfunctions">
+                            <a href="<!-- lw:var borrowurl -->">ausleihen</a>
+                        </span>
+                        <!-- lw:endif borrow -->
+                        <!-- lw:if borrowed -->
+                        <span class="lt_adminfunctions">
+                            ausgeliehen von <!-- lw:var borrower -->
+                        </span>
+                        <!-- lw:endif borrowed -->
                         <!-- lw:endif ltWrite -->
                     </td>
                 </tr>

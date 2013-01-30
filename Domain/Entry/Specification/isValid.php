@@ -26,7 +26,19 @@ class isValid extends \LWddd\Validator
                 "opt1file",
                 "opt2file");
         
-        $this->maxfilesize = 10000;
+        $mvalue = ini_get("upload_max_filesize");
+        if (intval($mvalue) > intval(ini_get("post_max_size"))) $mvalue = ini_get("post_max_size");
+        
+        if(substr($mvalue, -1, 1)=="M") {
+            $mvalue = substr($mvalue, 0, strlen($mvalue)-1)*1024*1024;
+        }
+        elseif(substr($mvalue, -1, 1)=="K") {
+            $mvalue = substr($mvalue, 0, strlen($mvalue)-1)*1024;
+        }
+        elseif(substr($mvalue, -1, 1)=="G") {
+            $mvalue = substr($mvalue, 0, strlen($mvalue)-1)*1024*1024*1024;        
+        }
+        $this->maxfilesize = $mvalue;
     }
     
     static public function getInstance()
@@ -156,8 +168,7 @@ class isValid extends \LWddd\Validator
         
         $array = $object->getValueByKey($key);
         if (!$array['name']) {
-            $this->addError($key, LW_REQUIRED_ERROR);
-            return false;
+            return true;
         }
         
         if ($array['size'] > $this->maxfilesize) {

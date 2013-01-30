@@ -6,12 +6,18 @@ class EntryForm extends \LWmvc\View
 {
     public function __construct($type)
     {
-        parent::__construct('edit');
+        parent::__construct($type);
         $this->dic = new \lwListtool\Services\dic();
         $this->systemConfiguration = $this->dic->getConfiguration();
         $this->view = new \lw_view(dirname(__FILE__).'/templates/EntryForm.tpl.phtml');
+        $this->setEntryType($type);
     }
 
+    public function setConfiguration($configuration)
+    {
+        $this->configuration = $configuration;
+    }    
+    
     public function setEntryType($type)
     {
         if ($type != "file") {
@@ -39,6 +45,14 @@ class EntryForm extends \LWmvc\View
         else {
             $this->view->actionUrl = \lw_page::getInstance()->getUrl(array("cmd"=>"saveEntry", "id"=>$this->entity->getId()));
         }
+        
+        if ($this->configuration->getValueByKey('language') == "de") {
+            $this->view->lang = "de";
+        }
+        else {
+            $this->view->lang = "en";
+        }
+        
         $this->view->isWriteAllowed = true;
         $this->view->entry = $this->entity;
         $form = $this->view->render();

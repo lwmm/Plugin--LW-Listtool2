@@ -12,7 +12,7 @@ class getIsDeletableSpecification extends \LWddd\DomainEventResolver
     
     public function getInstance($event)
     {
-        return new getListEntriesAggregate($event);
+        return new getIsDeletableSpecification($event);
     }
     
     public function resolve()

@@ -7,6 +7,9 @@ class entry extends \LWddd\Entity
     public function __construct($id=false)
     {
         parent::__construct($id);
+        $this->dic = new \lwListtool\Services\dic();
+        $this->systemConfiguration = $this->dic->getConfiguration();
+        $this->path = $this->systemConfiguration['path']['listtool'];
     }
     
     public function renderView($view)
@@ -16,7 +19,7 @@ class entry extends \LWddd\Entity
     
     public function isLink()
     {
-        if ($this->getValueByKey('opt1bool') == 1 && $this->isLoaded()) {
+        if ($this->getValueByKey('opt1bool') == 1) {
             return true;
         }
         return false;
@@ -24,15 +27,45 @@ class entry extends \LWddd\Entity
     
     public function isFile()
     {
-        if ($this->getValueByKey('opt1bool') != 1 && $this->isLoaded()) {
+        if ($this->getValueByKey('opt1bool') != 1) {
             return true;
         }
         return false;
     }
     
+    public function getFilePath()
+    {
+        return $this->path.'item_'.$this->getValueByKey("id").'.file';
+    }
+    
+    public function getThumbnailPath()
+    {
+        return $this->path.$this->getValueByKey("opt1file");
+    }
+    
+    public function getThumbnailUrl()
+    {
+        return \lw_page::getInstance()->getUrl(array("cmd"=>"showThumbnail", "id"=>$this->getValueByKey("id")));
+    }
+    
     public function hasFile()
     {
+        if (is_file($this->getFilePath())) {
+            return true;
+        }
         return false;
+    }
+    
+    public function getFileRights()
+    {
+        $file = new \lw_file($this->getFilePath());
+        return $file->getRights();
+    }
+    
+    public function getFileSize()
+    {
+        $file = new \lw_file($this->getFilePath());
+        return $file->getSize();
     }
     
     public function hasLastDate()
@@ -52,11 +85,42 @@ class entry extends \LWddd\Entity
     
     public function hasThumbnail()
     {
+        if (is_file($this->getThumbnailPath())) {
+            return true;
+        }
         return false;
     }
     
     public function getFirstDate()
     {
         return \lw_object::formatDate($this->getValueByKey('lw_first_date'));
+    }
+    
+    public function isBorrowed()
+    {
+        if ($this->getValueByKey('opt2bool') == 1) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function isBorrower($userId)
+    {
+        if ($this->getValueByKey('opt6number') == $userId) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function getBorrowerId()
+    {
+        return $this->getValueByKey('opt6number');
+    }
+    
+    public function getBorrowerName()
+    {
+        $db = $this->dic->getDbObject();
+        $result = $db->select1("SELECT name FROM ".$db->gt("lw_in_user")." WHERE id = ".intval($this->getValueByKey('opt6number')));
+        return $result['name'];
     }
 }

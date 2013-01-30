@@ -26,6 +26,8 @@ class save extends \LWddd\DomainEventResolver
     
     public function saveEntity($entity)
     {
+        $config = $this->dic->getConfiguration();
+        $this->getCommandHandler()->setFilePath($config['path']['listtool']);
         $result = $this->getCommandHandler()->saveEntity($entity->getId(), $entity->getValues());
         $this->postSaveWork($result, $entity->getId(), $entity);
         return $entity->getId();

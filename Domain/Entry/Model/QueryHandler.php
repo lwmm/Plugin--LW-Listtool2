@@ -15,10 +15,10 @@ class QueryHandler
         if (!$sorting) {
             $sorting = "name";
         }
-        $this->db->setStatement("SELECT * FROM t:lw_master WHERE lw_object = :type AND category_id = :category ORDER BY :orderby ");
+        $this->db->setStatement("SELECT * FROM t:lw_master WHERE lw_object = :type AND category_id = :category ORDER BY :orderby ASC");
         $this->db->bindParameter("type", "s", $this->type);
         $this->db->bindParameter("category", "i", $listId);
-        $this->db->bindParameter("orderby", "s", $sorting);
+        $this->db->bindParameter("orderby", "f", $sorting);
         return $this->db->pselect();
     }
     

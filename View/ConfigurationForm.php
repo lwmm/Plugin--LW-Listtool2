@@ -8,7 +8,7 @@ class ConfigurationForm extends \LWmvc\View
     {
         parent::__construct('edit');
         $this->dic = new \lwListtool\Services\dic();
-        $this->view = new \lw_view(dirname(__FILE__).'/templates/Form.tpl.phtml');
+        $this->view = new \lw_view(dirname(__FILE__).'/templates/ConfigurationForm.tpl.phtml');
         $this->systemConfiguration = $this->dic->getConfiguration();
     }
 

@@ -116,6 +116,22 @@
                 </div>
             </div>
             
+            <div class="lw_entry lw_select" id="lw_listtool_language" >
+                <div class="lw_contentwrapper">
+                    <label for="language"><span>Eintrag ausleihen</span></label>
+                    <div class="lw_content">
+                        <span>    
+                            <select  name="borrow"  id="lw_fe_inputelement_lw_listtool_language"  class=" lw_fe_selectone" >
+                                <option value="1"<?php if ($this->entity->getValueByKey('borrow') == 1): ?> selected="selected"<?php endif; ?>/> ja&nbsp;&nbsp;</option>
+                                <option value="0"<?php if ($this->entity->getValueByKey('borrow') == 0): ?> selected="selected"<?php endif; ?>/> nein&nbsp;&nbsp;</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="lw_comment"><sup class="lw_footnote">4</sup></div>
+                    <div class="clearfix">&nbsp;</div>
+                </div>
+            </div>
+            
             <div class="lw_functions_bottom">
                 <input type="button" onClick="document.location.href='<?php echo $this->backUrl; ?>'" value="abbrechen" />
                 <input type="submit"  value="speichern"  />
@@ -128,6 +144,7 @@
                 <li><span><i>via Backenduser</i>: darf nur von Administratoren und Redakteuren bearbeitet werden!<br/><i>via Intranetuser</i>: darf nur von Intranetusern bearbeitet werden!<br/><i>via Backend- und Intranetuser oder ------</i>: darf sowohl von Intranet- als auch Backendusern bearbeitet werden!</span></li>
                 <li><span>Dateiendungen bitte kommasepariert eingeben und mit f&uuml;hrendem Punkt versehen.<br/>Beispiel: <i>.txt,.doc,.xls</i></span></li>
                 <li><span>Whitelist: nur die einegegebenen Dateiendungen sind erlaubt<br/>Blacklist: die einegegebenen Dateiendungen sind <strong>nicht</strong> erlaubt<br/>Wurden keine Dateiendungen eingegeben, sind automatisch alle erlaubt!</span></li>
+                <li><span>Ausleihen bedeutet, dass ein User sich den Eintrag zur Bearbeitung sperren kann.<br/>In dieser Zeit kann kein anderer Benutzer an diesem Eintrag arbeiten.<br/>Spätestens am nächsten Tag ist der Eintrag automatisch wieder freigegeben.</span></li>
             </ol>
         </div>
         

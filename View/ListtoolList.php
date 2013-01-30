@@ -23,11 +23,13 @@ namespace lwListtool\View;
 
 class ListtoolList extends \LWmvc\View
 {
-    public function __construct($type)
+    public function __construct()
     {
         parent::__construct('edit');
         $this->dic = new \lwListtool\Services\dic();
         $this->systemConfiguration = $this->dic->getConfiguration();
+        $this->auth = $this->dic->getLwAuth();
+        $this->inAuth = $this->dic->getLwInAuth();
     }
 
     public function setListRights($rights)
@@ -85,8 +87,33 @@ class ListtoolList extends \LWmvc\View
             if ($this->listRights->isWriteAllowed()) {
                 $btpl->setIfVar('ltWrite');
             }
+            if ($this->configuration->getValueByKey('borrow') == 1) {
+                if ($entry->isBorrowed()) {
+                    if ($this->auth->isLoggedIn() || $entry->isBorrower($this->inAuth->getUserdata("id"))) {
+                        $btpl->setIfVar('showEditOptions');
+                        $btpl->setIfVar('showReleaseLink');
+                        $btpl->reg("releaseurl", \lw_page::getInstance()->getUrl(array("cmd"=>"releaseEntry", "id"=>$entry->getValueByKey("id"))));
+                    }
+                    else  {
+                        $btpl->setIfVar('borrowed');
+                        $btpl->reg('borrower', $entry->getBorrowerName().' <!-- borrower_id: '.$entry->getBorrowerId().' --> ');
+                    }
+                }
+                else {
+                    $btpl->setIfVar('borrow');
+                    $btpl->reg("borrowurl", \lw_page::getInstance()->getUrl(array("cmd"=>"borrowEntry", "id"=>$entry->getValueByKey("id"))));
+                }
+            }
+            else {
+                $btpl->setIfVar('showEditOptions');
+            }
             $bout.= $btpl->parse();
         }
+        
+        if ($this->configuration->getValueByKey('sorting') == "opt1number" && $this->listRights->isWriteAllowed()) {
+            $this->view->setIfVar("manualsorting");
+        }   
+        
         $this->view->putBlock("entry", $bout);
         $listtoolbase = new \lwListtool\View\ListtoolBase();
         return $listtoolbase->render()."\n".$this->view->parse();

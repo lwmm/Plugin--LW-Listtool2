@@ -26,6 +26,8 @@ class add extends \LWddd\DomainEventResolver
     
     public function saveEntity($entity)
     {
+        $config = $this->dic->getConfiguration();
+        $this->getCommandHandler()->setFilePath($config['path']['listtool']);
         $id = $this->getCommandHandler()->addEntity($this->event->getParameterByKey("listId"), $entity->getValues());
         $this->postSaveWork($id, $id, $entity);
         return $id;

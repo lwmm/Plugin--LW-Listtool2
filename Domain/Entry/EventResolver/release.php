@@ -2,7 +2,7 @@
 
 namespace lwListtool\Domain\Entry\EventResolver;
 
-class delete extends \LWddd\DomainEventResolver
+class release extends \LWddd\DomainEventResolver
 {
     public function __construct($event)
     {
@@ -13,19 +13,17 @@ class delete extends \LWddd\DomainEventResolver
     
     public function getInstance($event)
     {
-        return new delete($event);
+        return new release($event);
     }
     
     public function resolve()
     {
-        $config = $this->dic->getConfiguration();
-        $this->getCommandHandler()->setFilePath($config['path']['listtool']);
-        $ok = $this->getCommandHandler()->deleteEntity($this->event->getParameterByKey("id"), $this->event->getParameterByKey("listId"));
+        $ok = $this->getCommandHandler()->releaseEntity($this->event->getParameterByKey("id"));
         if ($ok) {
-            $this->event->getResponse()->setParameterByKey('deleted', true);
+            $this->event->getResponse()->setParameterByKey('released', true);
         }
         else {
-            $this->event->getResponse()->setDataByKey('error', 'error deleting');
+            $this->event->getResponse()->setDataByKey('error', 'error releasing');
             $this->event->getResponse()->setParameterByKey('error', true);
         }                    
         return $this->event->getResponse();

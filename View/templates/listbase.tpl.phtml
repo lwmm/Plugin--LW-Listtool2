@@ -2,19 +2,19 @@
     $(function() {
 
         $( "#listtool_iframe" ).dialog({
-			autoOpen: false,
-			height: 550,
-			width: 500,
-			modal: true
-		});
+            autoOpen: false,
+            height: 550,
+            width: 500,
+            modal: true
+        });
 
-		$("#lt_new_file").click(function() {
+        $("#lt_new_file").click(function() {
             $("#listtool_iframe").html('<iframe frameborder="0" src="<?php echo $this->addurlfile; ?>" width="99%" height="99%" name="new file"></iframe>');
             $( "#listtool_iframe" ).dialog("open");
             return false;
         });
         
-		$("#lt_new_link").click(function() {
+        $("#lt_new_link").click(function() {
             $("#listtool_iframe").html('<iframe frameborder="0" src="<?php echo $this->addurllink; ?>" width="99%" height="99%" name="new file"></iframe>');
             $( "#listtool_iframe" ).dialog("open");
             return false;

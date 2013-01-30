@@ -4,7 +4,7 @@ namespace lwListtool\View;
 
 class ListtoolBase extends \LWmvc\View
 {
-    public function __construct($type)
+    public function __construct()
     {
         $this->view = new \lw_view(dirname(__FILE__).'/templates/listbase.tpl.phtml');
     }
@@ -13,7 +13,7 @@ class ListtoolBase extends \LWmvc\View
     {
         $this->view->addurlfile = \lw_page::getInstance()->getUrl(array("cmd"=>"showAddFileForm"));
         $this->view->addurllink = \lw_page::getInstance()->getUrl(array("cmd"=>"showAddLinkForm"));
-        $this->view->sorturl = \lw_page::getInstance()->getUrl();
+        $this->view->sorturl = \lw_page::getInstance()->getUrl(array("cmd"=>"sortEntries"));
         $this->view->baseurl = \lw_page::getInstance()->getUrl();
         return $this->view->render();
     }

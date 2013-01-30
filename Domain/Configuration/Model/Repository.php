@@ -46,6 +46,7 @@ class Repository extends \LWddd\Repository
         $parameter['suffix'] = $dataValueObject->getValueByKey("suffix");
         $parameter['secured'] = $dataValueObject->getValueByKey("secured");
         $parameter['language'] = $dataValueObject->getValueByKey("language");
+        $parameter['borrow'] = $dataValueObject->getValueByKey("borrow");
         $content = false;
         return $this->getCommandHandler()->savePluginData($id, $parameter, $content);
     }
