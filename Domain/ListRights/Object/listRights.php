@@ -72,10 +72,17 @@ class listRights extends \LWddd\Entity
     
     public function isReadAllowed()
     {
-        if ($this->auth->isLoggedIn() && $this->isAuthInvolved()) {
+        $type = $this->listConfig->getValueByKey('readableby');
+        if ($type == "intranet" && $this->inAuth->isLoggedIn()) {
             return true;
         }
-        if ($this->inAuth->isLoggedIn() && $this->isInAuthInvolved()) {
+        elseif ($type == "backend" && $this->auth->isLoggedIn()) {
+            return true;
+        }
+        elseif ($type == "intranet_backend" && ($this->inAuth->isLoggedIn() || $this->auth->isLoggedIn())) {
+            return true;
+        }
+        elseif (!$type) {
             return true;
         }
         return false;

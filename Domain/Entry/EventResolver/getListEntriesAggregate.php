@@ -20,7 +20,8 @@ class getListEntriesAggregate extends \LWddd\DomainEventResolver
     public function resolve()
     {
         $conf = $this->event->getParameterByKey("configuration");
-        $items = $this->getQueryHandler()->loadAllEntriesByListId($this->event->getParameterByKey("listId"), $conf->getValueByKey("sorting"));
+        $listRights = $this->event->getParameterByKey("listRights");
+        $items = $this->getQueryHandler()->loadAllEntriesByListId($this->event->getParameterByKey("listId"), $conf->getValueByKey("sorting"), $listRights->isWriteAllowed());
         $aggregate = $this->buildAggregateFromQueryResult($items, true);        
         $this->event->getResponse()->setDataByKey('listEntriesAggregate', $aggregate);
         return $this->event->getResponse();        

@@ -52,9 +52,10 @@ class FrontendController extends \LWmvc\Controller
             $view = new \lwListtool\View\ListtoolList();
             $view->setConfiguration($this->listConfig);
             $view->setListRights($this->listRights);
+            $view->setListId($this->configurationId);
             $view->init();
         
-            $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$this->listConfig, "listId"=>$this->configurationId));
+            $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$this->listConfig, "listId"=>$this->configurationId, "listRights"=>$this->listRights));
             $view->setAggregate($response->getDataByKey('listEntriesAggregate'));
 
             $response = $this->executeDomainEvent('Entry', 'getIsDeletableSpecification');

@@ -93,7 +93,17 @@ class entry extends \LWddd\Entity
     
     public function getFirstDate()
     {
-        return \lw_object::formatDate($this->getValueByKey('lw_first_date'));
+        $date = substr($this->getValueByKey('lw_first_date'), 0, 8);
+        return \lw_object::formatDate($date);
+    }
+    
+    public function getFirstTime()
+    {
+        $hour = substr($this->getValueByKey('lw_first_date'), 8, 2);
+        $min = substr($this->getValueByKey('lw_first_date'), 10, 2);
+        $sec = substr($this->getValueByKey('lw_first_date'), 12, 2);
+        
+        return $hour.':'.$min.':'.$sec;
     }
     
     public function isBorrowed()

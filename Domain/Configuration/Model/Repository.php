@@ -47,6 +47,18 @@ class Repository extends \LWddd\Repository
         $parameter['secured'] = $dataValueObject->getValueByKey("secured");
         $parameter['language'] = $dataValueObject->getValueByKey("language");
         $parameter['borrow'] = $dataValueObject->getValueByKey("borrow");
+        $parameter['showcss'] = $dataValueObject->getValueByKey("showcss");
+        $parameter['linktype'] = $dataValueObject->getValueByKey("linktype");
+        $parameter['publishedoption'] = $dataValueObject->getValueByKey("publishedoption");
+        $parameter['showId'] = $dataValueObject->getValueByKey("showId");
+        $parameter['showUser'] = $dataValueObject->getValueByKey("showUser");
+        $parameter['showDate'] = $dataValueObject->getValueByKey("showDate");
+        $parameter['showTime'] = $dataValueObject->getValueByKey("showTime");
+        $parameter['showDescription'] = $dataValueObject->getValueByKey("showDescription");
+        $parameter['showName'] = $dataValueObject->getValueByKey("showName");
+        $parameter['title_description'] = $dataValueObject->getValueByKey("title_description");
+        $parameter['title_name'] = $dataValueObject->getValueByKey("title_name");
+        $parameter['readableby'] = $dataValueObject->getValueByKey("readableby");
         $content = false;
         return $this->getCommandHandler()->savePluginData($id, $parameter, $content);
     }

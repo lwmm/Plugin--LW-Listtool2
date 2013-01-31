@@ -10,12 +10,15 @@ class QueryHandler
         $this->type = "lw_listtool2";
     }
     
-    public function loadAllEntriesByListId($listId, $sorting)
+    public function loadAllEntriesByListId($listId, $sorting, $writeAllowed)
     {
         if (!$sorting) {
             $sorting = "name";
         }
-        $this->db->setStatement("SELECT * FROM t:lw_master WHERE lw_object = :type AND category_id = :category ORDER BY :orderby ASC");
+        if (!$writeAllowed) {
+            $where = " AND published = 1 ";
+        }
+        $this->db->setStatement("SELECT * FROM t:lw_master WHERE lw_object = :type AND category_id = :category ".$where." ORDER BY :orderby ASC");
         $this->db->bindParameter("type", "s", $this->type);
         $this->db->bindParameter("category", "i", $listId);
         $this->db->bindParameter("orderby", "f", $sorting);
