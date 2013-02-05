@@ -98,6 +98,15 @@ class ListtoolList extends \LWmvc\View
                 }
             }
             
+            if ($this->configuration->getValueByKey('showLastDate') == 1) {
+                $btpl->setIfVar("showlastdate");
+                $btpl->reg("lw_last_date", $entry->getLastDate());
+                if ($this->configuration->getValueByKey('showTime') == 1) {
+                    $btpl->setIfVar("showtime");
+                    $btpl->reg("lw_last_time", $entry->getLastTime());
+                }
+            }
+            
             if ($this->configuration->getValueByKey('showDescription') == 1) {
                 $btpl->setIfVar("showdescription");
                 $btpl->reg("description", html_entity_decode($entry->getValueByKey('description')));
@@ -177,6 +186,10 @@ class ListtoolList extends \LWmvc\View
             $this->view->setIfVar("showdate");
         }
         
+        if ($this->configuration->getValueByKey('showLastDate') == 1) {
+            $this->view->setIfVar("showlastdate");
+        }
+        
         if ($this->configuration->getValueByKey('showDescription') == 1) {
             $this->view->setIfVar("showdescription");
         }
@@ -232,6 +245,7 @@ class ListtoolList extends \LWmvc\View
             $tpl->reg("lang_name", "Name");
         }
         $tpl->reg("lang_date", "Date");
+        $tpl->reg("lang_lastdate", "Last change");
         $tpl->reg("lang_published", "Published");
         if ($this->configuration->getValueByKey('title_description')) {
             $tpl->reg("lang_description", $this->configuration->getValueByKey('title_description'));
@@ -240,14 +254,24 @@ class ListtoolList extends \LWmvc\View
             $tpl->reg("lang_description", "Description");
         }
         $tpl->reg("lang_user", "User");
-        $tpl->reg("lang_link", "Link");
-        $tpl->reg("lang_download", "Download");
+        if ($this->configuration->getValueByKey('title_link')) {
+            $tpl->reg("lang_link", $this->configuration->getValueByKey('title_link'));
+        }
+        else {
+            $tpl->reg("lang_link", "Link");
+        }
+        if ($this->configuration->getValueByKey('title_download')) {
+            $tpl->reg("lang_download", $this->configuration->getValueByKey('title_download'));
+        }
+        else {
+            $tpl->reg("lang_download", "Download");
+        }
         $tpl->reg("lang_edit", "edit");
         $tpl->reg("lang_delete", "delete");
-        $tpl->reg("lang_release", "release");
-        $tpl->reg("lang_borrow", "borrow");
+        $tpl->reg("lang_release", '<span title="check the entry in to allow other persons to edit it">check in</span>');
+        $tpl->reg("lang_borrow", '<span title="checked out entries can only be edited by you or an administrator. Other users cannot edit this entry. It is still possible to use the link or download the file.">check out for editing</span>');
         $tpl->reg("lang_reallydelete", "really delete?");
-        $tpl->reg("lang_borrowedby", "borrowed by");
+        $tpl->reg("lang_borrowedby", "checked out by");
         $tpl->reg("lang_noentries", "no entries available");
     }
 
@@ -263,6 +287,7 @@ class ListtoolList extends \LWmvc\View
             $tpl->reg("lang_name", "Name");
         }
         $tpl->reg("lang_date", "Datum");
+        $tpl->reg("lang_lastdate", "letzte &Auml;nderung");
         $tpl->reg("lang_published", "ver&ouml;ffentlicht");
         if ($this->configuration->getValueByKey('title_description')) {
             $tpl->reg("lang_description", $this->configuration->getValueByKey('title_description'));
@@ -271,14 +296,24 @@ class ListtoolList extends \LWmvc\View
             $tpl->reg("lang_description", "Beschreibung");
         }
         $tpl->reg("lang_user", "Benutzer");
-        $tpl->reg("lang_link", "Verlinkung");
-        $tpl->reg("lang_download", "Herunterladen");
+        if ($this->configuration->getValueByKey('title_link')) {
+            $tpl->reg("lang_link", $this->configuration->getValueByKey('title_link'));
+        }
+        else {
+            $tpl->reg("lang_link", "Verlinkung");
+        }
+        if ($this->configuration->getValueByKey('title_download')) {
+            $tpl->reg("lang_download", $this->configuration->getValueByKey('title_download'));
+        }
+        else {
+            $tpl->reg("lang_download", "Herunterladen");
+        }
         $tpl->reg("lang_edit", "bearbeiten");
         $tpl->reg("lang_delete", "l&oumlschen");
-        $tpl->reg("lang_release", "zur&uuml;ckgeben");
-        $tpl->reg("lang_borrow", "ausleihen");
+        $tpl->reg("lang_release", '<span title="Den Eintrag zur&uuml;ckgeben, damit andere Personen diesen bearbeiten k&ouml;nnen.">zur&uuml;ckgeben</span>');
+        $tpl->reg("lang_borrow", '<span title="Ausgeliehene Eintr&auml;ge k&ouml;nnen nur von dem Ausleiher und einem Administrator bearbeitet werden. Andere Nutzer haben keinen Schreibzugriff. Der Eintrag steht dar&uuml;ber hinaus aber zum Donwload/Verlinkung weiterhin zur Verf&uuml;gung.">zur Bearbeitung ausleihen</span>');
         $tpl->reg("lang_reallydelete", "wirklich l&ouml;schen?");
-        $tpl->reg("lang_borrowedby", "ausgeliehen von");
+        $tpl->reg("lang_borrowedby", "wird bearbeitet von");
         $tpl->reg("lang_noentries", "Es liegen keine Eintr&auml;ge vor.");
     }
 }

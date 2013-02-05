@@ -228,10 +228,12 @@ class FrontendController extends \LWmvc\Controller
             $view->setListRights($this->listRights);
             $view->init();
         
-            $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$this->listConfig, "listId"=>$this->configurationId));
+            $response = $this->executeDomainEvent('Entry', 'getListEntriesAggregate', array("configuration"=>$this->listConfig, "listId"=>$this->configurationId, "listRights"=>$this->listRights));
             $view->setAggregate($response->getDataByKey('listEntriesAggregate'));
 
-            return $this->returnRenderedView($view);    
+            $response = $this->returnRenderedView($view);
+            $response->setParameterByKey('die', 1);
+            return $response;
         }
         else {
            die("not allowed");

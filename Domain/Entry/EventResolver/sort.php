@@ -7,6 +7,7 @@ class sort extends \LWddd\DomainEventResolver
     public function __construct($event)
     {
         parent::__construct($event);
+        $this->dic = new \lwListtool\Services\dic();
         $this->baseNamespace = "\\lwListtool\\Domain\\Entry\\";
         $this->ObjectClass = $this->baseNamespace."Object\\entry";
     }

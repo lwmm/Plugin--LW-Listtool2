@@ -52,6 +52,9 @@
                     <!-- lw:if showdate -->
                     <th><!-- lw:var lang_date --></th>
                     <!-- lw:endif showdate -->
+                    <!-- lw:if showlastdate -->
+                    <th><!-- lw:var lang_lastdate --></th>
+                    <!-- lw:endif showlastdate -->
                     <!-- lw:if showuser -->
                     <th><!-- lw:var lang_user --></th>
                     <!-- lw:endif showuser -->
@@ -98,6 +101,12 @@
                         <!-- lw:if showtime --><!-- lw:var lw_first_time --><!-- lw:endif showtime -->
                     </td>
                     <!-- lw:endif showdate -->
+                    <!-- lw:if showlastdate -->
+                    <td align="left">
+                        <!-- lw:if showlastdate --><!-- lw:var lw_last_date --><!-- lw:endif showlastdate -->
+                        <!-- lw:if showtime --><!-- lw:var lw_last_time --><!-- lw:endif showtime -->
+                    </td>
+                    <!-- lw:endif showlastdate -->
                     <!-- lw:if showuser -->
                     <td><!-- lw:var last_username --></td>
                     <!-- lw:endif showuser -->

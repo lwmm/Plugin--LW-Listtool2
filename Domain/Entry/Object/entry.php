@@ -106,6 +106,21 @@ class entry extends \LWddd\Entity
         return $hour.':'.$min.':'.$sec;
     }
     
+    public function getLastDate()
+    {
+        $date = substr($this->getValueByKey('lw_last_date'), 0, 8);
+        return \lw_object::formatDate($date);
+    }
+    
+    public function getLastTime()
+    {
+        $hour = substr($this->getValueByKey('lw_last_date'), 8, 2);
+        $min = substr($this->getValueByKey('lw_last_date'), 10, 2);
+        $sec = substr($this->getValueByKey('lw_last_date'), 12, 2);
+        
+        return $hour.':'.$min.':'.$sec;
+    }
+    
     public function isBorrowed()
     {
         if ($this->getValueByKey('opt2bool') == 1) {

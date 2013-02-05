@@ -53,12 +53,15 @@ class Repository extends \LWddd\Repository
         $parameter['showId'] = $dataValueObject->getValueByKey("showId");
         $parameter['showUser'] = $dataValueObject->getValueByKey("showUser");
         $parameter['showDate'] = $dataValueObject->getValueByKey("showDate");
+        $parameter['showLastDate'] = $dataValueObject->getValueByKey("showLastDate");
         $parameter['showTime'] = $dataValueObject->getValueByKey("showTime");
         $parameter['showDescription'] = $dataValueObject->getValueByKey("showDescription");
         $parameter['showName'] = $dataValueObject->getValueByKey("showName");
         $parameter['title_description'] = $dataValueObject->getValueByKey("title_description");
         $parameter['title_name'] = $dataValueObject->getValueByKey("title_name");
         $parameter['readableby'] = $dataValueObject->getValueByKey("readableby");
+        $parameter['title_link'] = $dataValueObject->getValueByKey("title_link");
+        $parameter['title_download'] = $dataValueObject->getValueByKey("title_download");
         $content = false;
         return $this->getCommandHandler()->savePluginData($id, $parameter, $content);
     }
