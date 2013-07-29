@@ -20,6 +20,11 @@ class lw_listtool2 extends lw_plugin
             $path = $this->config['plugin_path']['lw'].'lw_mvc';
             $filename = str_replace('LWmvc', $path, $className);
         }
+        elseif (strstr($className, 'LwI18n')) {
+            $config = \lw_registry::getInstance()->getEntry('config');
+            $path = $this->config['plugin_path']['lw'].'lw_i18n';
+            $filename = str_replace('LwI18n', $path, $className);
+        }
         else {
             $className = str_replace("Factory", "", $className);
             $filename = $this->config['path']['package'].$className;
